@@ -1,28 +1,37 @@
 # bta
 Beating The Alternative: a tool for generating reports from health tracking data sources
 
-# requirements
-pip install myfitnesspal 
+# installation
 
-# usage
-mthome$ myfitnesspal store-password MYUSERNAME
-MyFitnessPal Password for MYUSERNAME: 
+## requirements
+> pip install myfitnesspal 
 
-mthome$ ./bta.py MYUSERNAME
+# using
 
-# glucose notes
+## usage
+> mthome$ myfitnesspal store-password MYUSERNAME
+> MyFitnessPal Password for MYUSERNAME: 
+> 
+> mthome$ ./bta.py MYUSERNAME
 
-fasting [time]
-7:15am 101
+## glucose notes
 
-breakfast [8:30 [101]]
-9:30 130 10:30 110 !awesome
+> fasting [time]
+> 7:15am 101
+> 
+> breakfast [8:30 [101]]
+> 9:30 130 10:30 110 !awesome
 
 The general form is:
-meal [time [glucose]
-time glucose [time2 glucose2 ...]
+> meal [time [glucose]
+> time glucose [time2 glucose2 ...]
+
+Where meal is one of fasting, breakfast, lunch, dinner, snack
 
 # references
-https://openpyxl.readthedocs.org/en/2.3.3/
-https://github.com/coddingtonbear/python-myfitnesspal
+The basic access library is https://github.com/coddingtonbear/python-myfitnesspal
+
+For excel output: https://openpyxl.readthedocs.org/en/2.3.3/
+
+And I'll probably also add hsql and sqlalchemy to keep a local database of information and to aggregate from multiple services.
 

@@ -5,6 +5,7 @@ Beating The Alternative: a tool for generating reports from health tracking data
 
 ## requirements
 > pip install myfitnesspal 
+> pip install openpyxl pillow
 
 # using
 
@@ -34,4 +35,7 @@ The basic access library is https://github.com/coddingtonbear/python-myfitnesspa
 For excel output: https://openpyxl.readthedocs.org/en/2.3.3/
 
 And I'll probably also add hsql and sqlalchemy to keep a local database of information and to aggregate from multiple services.
+
+# LICENSE
+GPL3 (See LICENSE)
 

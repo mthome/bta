@@ -12,7 +12,7 @@ oneday = timedelta(days=1)
 class Record(object):
     def __init__(self, date, **kwargs):
         self.date = date
-        for arg,v in kwargs.iteritems():
+        for arg,v in kwargs.items():
             self.__setattr__(arg,v)
 
 class BTA(object):

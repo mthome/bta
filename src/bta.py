@@ -5,6 +5,7 @@ import myfitnesspal
 import sys
 from datetime import timedelta, datetime, date
 from openpyxl import Workbook
+from openpyxl.comments import Comment
 from argparse import ArgumentParser
 
 oneday = timedelta(days=1)
@@ -14,6 +15,22 @@ class Record(object):
         self.date = date
         for arg,v in kwargs.items():
             self.__setattr__(arg,v)
+    def grok_notes(self, notes):
+        self.notes = notes
+        '''
+fasting 7:30am 101
+bkfst 7:50am NR
+coffee 8:30am  11:30am 97
+amsnack 12:20pm NR
+lunch 1:15pm NR 2:30pm 112 3:30pm 110
+afsnack 3:45pm  NR 5:50pm 144
+dinner 8:15pm 129
+AB 11;45pm 123
+        '''
+        lines = notes.split('\n')
+        m = 'unknown'
+        #for line in lines:
+        #print('\n{}'.format(notes))
 
 class BTA(object):
     def __init__(self,username):
@@ -40,6 +57,8 @@ class BTA(object):
             
             carbs = 0
             cals = 0
+            meals = {}
+            notes = ''
             try:
                 weight = self.weights[d]
             except:
@@ -53,7 +72,7 @@ class BTA(object):
             try:
                 data = client.get_date(d)
                 meals = data.meals
-                # notes = data.notes
+                notes = data.notes
                 totals = data.totals
                 carbs = totals['carbohydrates']
                 cals = totals['calories']
@@ -63,7 +82,9 @@ class BTA(object):
                          weight=weight,
                          steps=step,
                          carbs=carbs,
-                         cals=cals)
+                         cals=cals,
+                         meals=meals)
+            rec.grok_notes(notes)
             self.records.append(rec)
             d += oneday
     
@@ -96,7 +117,18 @@ class BTA(object):
         ws.cell(row=1,column=3, value='STEPS')
         ws.cell(row=1,column=4, value='CARBS')
         ws.cell(row=1,column=5, value='CALS')
-        
+
+        ws.cell(row=1,column=6, value='B CARBS')
+        ws.cell(row=1,column=7, value='B CALS')
+        ws.cell(row=1,column=8, value='L CARBS')
+        ws.cell(row=1,column=9, value='L CALS')
+        ws.cell(row=1,column=10, value='D CARBS')
+        ws.cell(row=1,column=11, value='D CALS')
+        ws.cell(row=1,column=12, value='S CARBS')
+        ws.cell(row=1,column=13, value='S CALS')
+
+        ws.cell(row=1,column=14, value='NOTES')
+
         r=2
         for rec in self.records:
             ws.cell(row=r, column=1, value=rec.date)
@@ -104,6 +136,23 @@ class BTA(object):
             ws.cell(row=r, column=3, value=rec.steps)
             ws.cell(row=r, column=4, value=rec.carbs)           
             ws.cell(row=r, column=5, value=rec.cals)
+            offset = 6
+            inc = 2
+            for m in range(0,4): #['breakfast', 'lunch', 'dinner', 'snack']:
+                try:
+                    meal = rec.meals[m].totals
+                    mcarb = meal['carbohydrates']
+                    mcals = meal['calories']
+                    ws.cell(row=r, column=offset, value=mcarb)
+                    ws.cell(row=r, column=offset+1, value=mcals)
+                except:
+                    pass
+                offset += inc
+            
+            if rec.notes != '':
+                cell = ws.cell(row=r, column=offset, value='{}'.format(len(rec.notes.split('\n'))))
+                cell.comment = Comment(rec.notes, 'bta')
+            offset +=1
             r += 1
         wb.save(dest)
         

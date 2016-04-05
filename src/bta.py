@@ -118,16 +118,13 @@ class BTA(object):
         ws.cell(row=1,column=4, value='CARBS')
         ws.cell(row=1,column=5, value='CALS')
 
-        ws.cell(row=1,column=6, value='B CARBS')
-        ws.cell(row=1,column=7, value='B CALS')
-        ws.cell(row=1,column=8, value='L CARBS')
-        ws.cell(row=1,column=9, value='L CALS')
-        ws.cell(row=1,column=10, value='D CARBS')
-        ws.cell(row=1,column=11, value='D CALS')
-        ws.cell(row=1,column=12, value='S CARBS')
-        ws.cell(row=1,column=13, value='S CALS')
+        ms = self.records[0].meals
+        c=6
+        for m in ms:
+            ws.cell(row=1,column=c, value=m.name)
+            c += 1
 
-        ws.cell(row=1,column=14, value='NOTES')
+        ws.cell(row=1,column=c, value='NOTES')
 
         r=2
         for rec in self.records:
@@ -137,21 +134,23 @@ class BTA(object):
             ws.cell(row=r, column=4, value=rec.carbs)           
             ws.cell(row=r, column=5, value=rec.cals)
             offset = 6
-            inc = 2
-            for m in range(0,4): #['breakfast', 'lunch', 'dinner', 'snack']:
+            for meal in rec.meals:
                 try:
-                    meal = rec.meals[m].totals
-                    mcarb = meal['carbohydrates']
-                    mcals = meal['calories']
+                    mt = meal.totals
+                    mcarb = mt['carbohydrates']
+                    mcals = mt['calories']
                     ws.cell(row=r, column=offset, value=mcarb)
-                    ws.cell(row=r, column=offset+1, value=mcals)
+                    #ws.cell(row=r, column=offset+1, value=mcals)
                 except:
                     pass
-                offset += inc
+                offset += 1
             
             if rec.notes != '':
-                cell = ws.cell(row=r, column=offset, value='{}'.format(len(rec.notes.split('\n'))))
-                cell.comment = Comment(rec.notes, 'bta')
+                #cell = ws.cell(row=r, column=offset, value='{}'.format(len(rec.notes.split('\n'))))
+                #cell = ws.cell(row=r, column=offset, value=rec.notes)
+                #cell.comment = Comment(rec.notes, 'bta')
+                r += 1
+                ws.cell(row=r, column=1, value=rec.notes)
             offset +=1
             r += 1
         wb.save(dest)
